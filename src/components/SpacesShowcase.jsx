@@ -16,7 +16,7 @@ export default function SpacesShowcase() {
     items:
       floor === "Highlight"
         ? spaces.filter((s) => s.floor === "Highlight" || s.designHighlight === true)
-        : spaces.filter((s) => s.floor === floor),
+        : spaces.filter((s) => s.floor === floor && !s.designHighlight),
   }));
 
   const openModal = (space) => {

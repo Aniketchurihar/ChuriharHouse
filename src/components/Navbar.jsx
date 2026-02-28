@@ -8,7 +8,6 @@ const navLinks = [
   { href: "#gallery", label: "Gallery" },
   { href: "#video", label: "Video" },
   { href: "#features", label: "Features" },
-  { href: "#highlights", label: "Highlights" },
   { href: "#360", label: "360 Tour" },
 ];
 

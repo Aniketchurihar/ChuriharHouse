@@ -9,7 +9,6 @@ import PhotoGallery from "./components/PhotoGallery";
 import ElevationSection from "./components/ElevationSection";
 import VideoSection from "./components/VideoSection";
 import FeaturesSection from "./components/FeaturesSection";
-import SpecialHighlightsSection from "./components/SpecialHighlightsSection";
 import PanoramicViewer from "./components/PanoramicViewer";
 import Footer from "./components/Footer";
 
@@ -35,7 +34,6 @@ function App() {
           <PhotoGallery />
           <VideoSection />
           <FeaturesSection />
-          <SpecialHighlightsSection />
           <PanoramicViewer />
           <Footer />
         </main>

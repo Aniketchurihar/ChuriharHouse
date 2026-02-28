@@ -1,5 +1,6 @@
 import { siteConfig } from "../data/siteConfig";
 import { FaPhone, FaMapLocationDot } from "react-icons/fa6";
+import { FaInstagram } from "react-icons/fa";
 
 const MAPS_URL = "https://maps.app.goo.gl/bFH8zWUWh8CQurTLA";
 const QR_CODE_URL = `https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=${encodeURIComponent(MAPS_URL)}`;
@@ -9,7 +10,7 @@ export default function Footer() {
     <footer className="relative border-t border-white/10 bg-[#0a0a0a] px-6 py-16 lg:px-8 lg:py-24">
       <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-[#b8860b]/50 to-transparent" aria-hidden />
       <div className="mx-auto max-w-7xl">
-        <div className="grid grid-cols-1 gap-12 md:grid-cols-2 lg:grid-cols-4">
+        <div className="grid grid-cols-1 items-start gap-12 sm:grid-cols-2 lg:grid-cols-5 lg:gap-8">
           {/* House name */}
           <div>
             <h3
@@ -18,9 +19,11 @@ export default function Footer() {
             >
               {siteConfig.houseName}
             </h3>
-            <p className="mt-4 font-body text-sm text-white/60">
-              {siteConfig.tagline}
-            </p>
+            {siteConfig.tagline && (
+              <p className="mt-4 font-body text-sm text-white/60">
+                {siteConfig.tagline}
+              </p>
+            )}
           </div>
 
           {/* Contact */}
@@ -32,22 +35,22 @@ export default function Footer() {
               <div className="mt-3 space-y-3">
                 <a
                   href={`tel:${siteConfig.contact.yash.phone.replace(/\D/g, "")}`}
-                  className="flex items-center gap-3 rounded border border-white/10 bg-white/5 px-4 py-3 font-body text-sm text-white/90 transition-colors hover:border-[#b8860b] hover:text-[#b8860b]"
+                  className="flex items-start gap-3 rounded border border-white/10 bg-white/5 px-4 py-3 text-white/90 transition-colors hover:border-[#b8860b] hover:text-[#b8860b]"
                 >
-                  <FaPhone className="h-4 w-4 shrink-0 text-[#b8860b]" />
-                  <div>
-                    <span className="block font-medium">{siteConfig.contact.yash.name}</span>
-                    <span className="text-white/70">{siteConfig.contact.yash.phone}</span>
+                  <FaPhone className="mt-0.5 h-4 w-4 shrink-0 text-[#b8860b]" />
+                  <div className="min-w-0 flex-1">
+                    <span className="block font-body text-sm font-medium">{siteConfig.contact.yash.name}</span>
+                    <span className="block font-body text-sm text-white/70">{siteConfig.contact.yash.phone}</span>
                   </div>
                 </a>
                 <a
                   href={`tel:${siteConfig.contact.aniket.phone.replace(/\D/g, "")}`}
-                  className="flex items-center gap-3 rounded border border-white/10 bg-white/5 px-4 py-3 font-body text-sm text-white/90 transition-colors hover:border-[#b8860b] hover:text-[#b8860b]"
+                  className="flex items-start gap-3 rounded border border-white/10 bg-white/5 px-4 py-3 text-white/90 transition-colors hover:border-[#b8860b] hover:text-[#b8860b]"
                 >
-                  <FaPhone className="h-4 w-4 shrink-0 text-[#b8860b]" />
-                  <div>
-                    <span className="block font-medium">{siteConfig.contact.aniket.name}</span>
-                    <span className="text-white/70">{siteConfig.contact.aniket.phone}</span>
+                  <FaPhone className="mt-0.5 h-4 w-4 shrink-0 text-[#b8860b]" />
+                  <div className="min-w-0 flex-1">
+                    <span className="block font-body text-sm font-medium">{siteConfig.contact.aniket.name}</span>
+                    <span className="block font-body text-sm text-white/70">{siteConfig.contact.aniket.phone}</span>
                   </div>
                 </a>
               </div>
@@ -60,16 +63,65 @@ export default function Footer() {
                 href={siteConfig.contact.mapsUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="mt-3 flex items-start gap-3 rounded border border-white/10 bg-white/5 px-4 py-3 font-body text-sm text-white/90 transition-colors hover:border-[#b8860b] hover:text-[#b8860b]"
+                className="mt-3 flex items-start gap-3 rounded border border-white/10 bg-white/5 px-4 py-3 text-white/90 transition-colors hover:border-[#b8860b] hover:text-[#b8860b]"
               >
                 <FaMapLocationDot className="mt-0.5 h-4 w-4 shrink-0 text-[#b8860b]" />
-                <div>
-                  <span className="block">{siteConfig.contact.address}</span>
-                  <span className="mt-1 text-xs text-[#b8860b]">Get directions →</span>
+                <div className="min-w-0 flex-1">
+                  <span className="block font-body text-sm">{siteConfig.contact.address}</span>
+                  <span className="mt-1 block font-body text-xs text-[#b8860b]">Get directions →</span>
                 </div>
               </a>
             </div>
           </div>
+
+          {/* House Design */}
+          {siteConfig.credits && (
+            <div className="min-w-0">
+              <h4 className="font-body text-xs font-semibold uppercase tracking-widest text-white/80">
+                House Design
+              </h4>
+              <div className="mt-3 space-y-3">
+                <a
+                  href={siteConfig.credits.civil.instagram}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-start gap-3 rounded border border-white/10 bg-white/5 px-4 py-3 text-white/90 transition-colors hover:border-[#b8860b] hover:bg-white/[0.08]"
+                >
+                  <FaInstagram className="mt-0.5 h-4 w-4 shrink-0 text-[#b8860b]" />
+                  <div className="min-w-0 flex-1">
+                    <span className="mb-1 block font-body text-[10px] font-semibold uppercase tracking-widest text-white/50">
+                      Civil Construction
+                    </span>
+                    <span className="block font-body text-sm font-medium text-white/90">
+                      {siteConfig.credits.civil.firm}
+                    </span>
+                    <span className="block font-body text-sm text-white/70">
+                      {siteConfig.credits.civil.phone}
+                    </span>
+                  </div>
+                </a>
+                <a
+                  href={siteConfig.credits.interior.instagram}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-start gap-3 rounded border border-white/10 bg-white/5 px-4 py-3 text-white/90 transition-colors hover:border-[#b8860b] hover:bg-white/[0.08]"
+                >
+                  <FaInstagram className="mt-0.5 h-4 w-4 shrink-0 text-[#b8860b]" />
+                  <div className="min-w-0 flex-1">
+                    <span className="mb-1 block font-body text-[10px] font-semibold uppercase tracking-widest text-white/50">
+                      Interior Design
+                    </span>
+                    <span className="block font-body text-sm font-medium text-white/90">
+                      {siteConfig.credits.interior.firm}
+                    </span>
+                    <span className="block font-body text-sm text-white/70">
+                      {siteConfig.credits.interior.phone}
+                    </span>
+                  </div>
+                </a>
+              </div>
+            </div>
+          )}
 
           {/* QR Code - Scan to navigate */}
           <div>
@@ -107,10 +159,16 @@ export default function Footer() {
         </div>
 
         <div className="mt-16 border-t border-white/10 pt-8">
-          <p className="font-body text-xs text-white/40">
-            © {new Date().getFullYear()} {siteConfig.houseName}. All rights
-            reserved.
-          </p>
+          <div className="flex flex-wrap items-baseline gap-x-2 gap-y-1">
+            <p className="font-body text-xs text-white/40">
+              © {new Date().getFullYear()} {siteConfig.houseName}. All rights reserved.
+            </p>
+            {siteConfig.siteDesigner && (
+              <span className="font-body text-[10px] text-white/25">
+                · Site by {siteConfig.siteDesigner}
+              </span>
+            )}
+          </div>
         </div>
       </div>
     </footer>

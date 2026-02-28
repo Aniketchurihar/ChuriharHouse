@@ -68,14 +68,16 @@ export default function HeroSection() {
           ))}
         </motion.div>
 
-        <motion.p
-          initial={{ y: 20, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          transition={{ delay: 0.8, duration: 0.6 }}
-          className="mt-6 font-body text-base font-light tracking-widest text-white/90 md:text-lg"
-        >
-          {siteConfig.tagline}
-        </motion.p>
+        {siteConfig.tagline && (
+          <motion.p
+            initial={{ y: 20, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{ delay: 0.8, duration: 0.6 }}
+            className="mt-6 font-body text-base font-light tracking-widest text-white/90 md:text-lg"
+          >
+            {siteConfig.tagline}
+          </motion.p>
+        )}
 
         <motion.a
           href="#about"
