@@ -1,0 +1,68 @@
+@import "tailwindcss";
+
+/* Custom theme - luxury architectural palette */
+@theme {
+  --color-primary-dark: #0a0a0a;
+  --color-primary-light: #fafaf9;
+  --color-accent: #b8860b;
+  --color-text-primary: #1a1a1a;
+  --color-text-secondary: #6b7280;
+
+  /* Typography */
+  --font-heading: "Playfair Display", Georgia, serif;
+  --font-body: "Inter", system-ui, sans-serif;
+
+  /* Spacing */
+  --section-padding: clamp(3rem, 8vw, 8rem);
+}
+
+/* Base styles */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Refined selection */
+::selection {
+  background-color: rgba(184, 134, 11, 0.25);
+  color: inherit;
+}
+
+/* 100dvh for mobile Safari viewport fix */
+.min-h-screen {
+  min-height: 100vh;
+  min-height: 100dvh;
+}
+
+body {
+  font-family: var(--font-body);
+  color: var(--color-text-primary);
+  background-color: var(--color-primary-light);
+  margin: 0;
+  overflow-x: hidden;
+}
+
+/* Section heading accent - reusable */
+.section-heading-accent {
+  position: relative;
+}
+
+.section-heading-accent::after {
+  content: "";
+  position: absolute;
+  bottom: -8px;
+  left: 0;
+  width: 48px;
+  height: 2px;
+  background: linear-gradient(90deg, #b8860b, transparent);
+}
+
+/* Respect reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
