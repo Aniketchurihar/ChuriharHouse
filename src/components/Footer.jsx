@@ -11,13 +11,13 @@ export default function Footer() {
       <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-[#b8860b]/50 to-transparent" aria-hidden />
       <div className="mx-auto max-w-7xl">
         <div className="grid grid-cols-1 items-start gap-12 sm:grid-cols-2 lg:grid-cols-5 lg:gap-8">
-          {/* House name */}
+          {/* Home name */}
           <div>
             <h3
               className="font-heading text-2xl font-medium tracking-wide text-white md:text-3xl"
               style={{ fontFamily: "Playfair Display, Georgia, serif" }}
             >
-              {siteConfig.houseName}
+              {siteConfig.homeName}
             </h3>
             {siteConfig.tagline && (
               <p className="mt-4 font-body text-sm text-white/60">
@@ -74,11 +74,11 @@ export default function Footer() {
             </div>
           </div>
 
-          {/* House Design */}
+          {/* Home Design */}
           {siteConfig.credits && (
             <div className="min-w-0">
               <h4 className="font-body text-xs font-semibold uppercase tracking-widest text-white/80">
-                House Design
+                Home Design
               </h4>
               <div className="mt-3 space-y-3">
                 <a
@@ -139,7 +139,7 @@ export default function Footer() {
             >
               <img
                 src={QR_CODE_URL}
-                alt="QR Code - Scan for directions to Churihar House"
+                alt="QR Code - Scan for directions to Churihar Home"
                 width={180}
                 height={180}
                 className="block"
@@ -161,7 +161,7 @@ export default function Footer() {
         <div className="mt-16 border-t border-white/10 pt-8">
           <div className="flex flex-wrap items-baseline gap-x-2 gap-y-1">
             <p className="font-body text-xs text-white/40">
-              © {new Date().getFullYear()} {siteConfig.houseName}. All rights reserved.
+              © {new Date().getFullYear()} {siteConfig.homeName}. All rights reserved.
             </p>
             {siteConfig.siteDesigner && (
               <span className="font-body text-[10px] text-white/25">

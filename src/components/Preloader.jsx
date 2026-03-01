@@ -24,7 +24,7 @@ export default function Preloader({ onComplete, isVisible }) {
             transition={{ duration: 0.5 }}
           >
             <div className="flex justify-center">
-              {"CHURIHAR HOUSE".split("").map((char, i) => (
+              {"CHURIHAR HOME".split("").map((char, i) => (
                 <motion.span
                   key={i}
                   className="font-heading text-3xl font-light tracking-[0.3em] text-[#fafaf9] md:text-5xl md:tracking-[0.5em]"

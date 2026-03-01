@@ -7,7 +7,7 @@ export const photos = [
     src: "https://images.unsplash.com/photo-1613490493576-7fde63acd811?w=1200&q=80",
     width: 1200,
     height: 800,
-    alt: "House exterior",
+    alt: "Home exterior",
     category: "exterior",
     caption: "Exterior view",
   },

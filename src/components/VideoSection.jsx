@@ -56,7 +56,7 @@ export default function VideoSection() {
           {videoConfig.type === "youtube" ? (
             <iframe
               src={`https://www.youtube.com/embed/${videoConfig.youtubeId}?autoplay=0&rel=0`}
-              title="House tour video"
+              title="Home tour video"
               allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
               allowFullScreen
               className="absolute inset-0 h-full w-full"

@@ -23,7 +23,7 @@ export default function HeroSection() {
       >
         <img
           src={heroImage}
-          alt="Churihar House exterior"
+          alt="Churihar Home exterior"
           className="h-full w-full object-cover"
         />
       </motion.div>
@@ -49,7 +49,7 @@ export default function HeroSection() {
             },
           }}
         >
-          {siteConfig.houseName.toUpperCase().split(" ").map((word, i) => (
+          {siteConfig.homeName.toUpperCase().split(" ").map((word, i) => (
             <motion.h1
               key={i}
               variants={{

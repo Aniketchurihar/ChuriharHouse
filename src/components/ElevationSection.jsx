@@ -41,7 +41,7 @@ export default function ElevationSection() {
               >
                 <img
                   src={src}
-                  alt={`Churihar House elevation ${i + 1}`}
+                  alt={`Churihar Home elevation ${i + 1}`}
                   className="h-auto w-full object-cover"
                 />
               </div>

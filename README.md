@@ -1,10 +1,10 @@
-# Churihar House
+# Churihar Home
 
-Website for Churihar House. Built with React, Tailwind CSS, GSAP, and Lenis.
+Website for Churihar Home. Built with React, Tailwind CSS, GSAP, and Lenis.
 
 ## Features
 
-- **Cinematic preloader** with letter-by-letter house name reveal
+- **Cinematic preloader** with letter-by-letter home name reveal
 - **Hero section** with Ken Burns zoom and split-text animation
 - **Photo gallery** with masonry layout, category filters, and fullscreen lightbox
 - **Video showcase** with YouTube/Vimeo/self-hosted support
@@ -18,7 +18,7 @@ Website for Churihar House. Built with React, Tailwind CSS, GSAP, and Lenis.
 
 Edit these files to add your own content:
 
-1. **`src/data/siteConfig.js`** - House name, tagline, contact info, social links
+1. **`src/data/siteConfig.js`** - Home name, tagline, contact info, social links
 2. **`src/data/photos.js`** - Replace with your photos (paths or URLs) and categories
 3. **`src/data/features.js`** - Update features, stats (bedrooms, sq ft, etc.)
 4. **`src/data/panoramas.js`** - Add your 360° panorama image paths/URLs

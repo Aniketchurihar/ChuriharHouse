@@ -1,5 +1,5 @@
 export const siteConfig = {
-  houseName: "Churihar House",
+  homeName: "Churihar Home",
   tagline: "",
   contact: {
     yash: { name: "Yash Churihar", phone: "+91 7771066467" },

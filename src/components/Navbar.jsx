@@ -38,7 +38,7 @@ export default function Navbar() {
             }`}
             style={{ fontFamily: "Playfair Display, Georgia, serif" }}
           >
-            Churihar House
+            Churihar Home
           </a>
 
           <div className="hidden items-center gap-10 lg:flex">

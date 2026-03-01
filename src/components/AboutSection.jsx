@@ -52,7 +52,7 @@ export default function AboutSection() {
         >
           <img
             src={aboutImage}
-            alt="Churihar House interior"
+            alt="Churihar Home interior"
             className="h-full w-full object-cover"
           />
         </motion.div>
