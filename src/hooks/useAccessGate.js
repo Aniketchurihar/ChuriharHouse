@@ -31,6 +31,11 @@ export function useAccessGate() {
     if (ref && VALID_REFS[ref]) {
       storeRef(ref);
       window.history.replaceState({}, "", window.location.pathname);
+
+      if (typeof window.clarity === "function") {
+        window.clarity("identify", VALID_REFS[ref]);
+      }
+
       setAccessState({ checked: true, allowed: true, visitor: VALID_REFS[ref] });
     } else {
       setAccessState({ checked: true, allowed: false, visitor: null });
