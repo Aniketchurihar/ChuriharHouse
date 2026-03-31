@@ -1,6 +1,6 @@
 import { redis } from "./_redis.js";
 
-const ADMIN_REF = "x7k9m2";
+const ADMIN_KEY = process.env.ADMIN_DASHBOARD_KEY || "ch_admin_9v3k";
 
 function escapeHtml(str) {
   return String(str)
@@ -150,7 +150,7 @@ export default async function handler(req, res) {
   }
 
   const { key } = req.query;
-  if (key !== ADMIN_REF) {
+  if (key !== ADMIN_KEY) {
     return res.status(403).json({ error: "Forbidden" });
   }
 
