@@ -1,6 +1,7 @@
 import { siteConfig } from "../data/siteConfig";
 import { FaPhone, FaMapLocationDot } from "react-icons/fa6";
 import { FaInstagram } from "react-icons/fa";
+import { handleGetDirections } from "../utils/directions";
 
 const MAPS_URL = "https://maps.app.goo.gl/bFH8zWUWh8CQurTLA";
 const QR_CODE_URL = `https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=${encodeURIComponent(MAPS_URL)}`;
@@ -61,9 +62,8 @@ export default function Footer() {
               </h4>
               <a
                 href={siteConfig.contact.mapsUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="mt-3 flex items-start gap-3 rounded border border-white/10 bg-white/5 px-4 py-3 text-white/90 transition-colors hover:border-[#b8860b] hover:text-[#b8860b]"
+                onClick={handleGetDirections}
+                className="mt-3 flex items-start gap-3 rounded border border-white/10 bg-white/5 px-4 py-3 text-white/90 transition-colors hover:border-[#b8860b] hover:text-[#b8860b] cursor-pointer"
               >
                 <FaMapLocationDot className="mt-0.5 h-4 w-4 shrink-0 text-[#b8860b]" />
                 <div className="min-w-0 flex-1">
@@ -133,9 +133,8 @@ export default function Footer() {
             </p>
             <a
               href={MAPS_URL}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="mt-4 inline-block rounded-lg border-2 border-white/20 p-3 transition-all duration-300 hover:border-[#b8860b] hover:shadow-[0_0_20px_rgba(184,134,11,0.15)]"
+              onClick={handleGetDirections}
+              className="mt-4 inline-block rounded-lg border-2 border-white/20 p-3 transition-all duration-300 hover:border-[#b8860b] hover:shadow-[0_0_20px_rgba(184,134,11,0.15)] cursor-pointer"
             >
               <img
                 src={QR_CODE_URL}

@@ -6,6 +6,7 @@ export const siteConfig = {
     aniket: { name: "Aniket Churihar", phone: "+91 8109314354" },
     address: "118, Bhagirath Colony Dharnaka, MHOW 453441",
     mapsUrl: "https://maps.app.goo.gl/bFH8zWUWh8CQurTLA",
+    coordinates: { lat: 22.5553, lng: 75.7594 },
   },
   social: {
     instagram: "https://instagram.com/churiharhouse",

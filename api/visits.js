@@ -2,9 +2,10 @@ import { redis } from "./_redis.js";
 
 const ADMIN_REF = "x7k9m2";
 
-function renderDashboard(visits, total, ipCounts) {
+function renderDashboard(visits, total, ipCounts, gpsData = {}) {
   const dataJson = JSON.stringify(visits).replace(/</g, "\\u003c").replace(/>/g, "\\u003e");
   const ipCountsJson = JSON.stringify(ipCounts).replace(/</g, "\\u003c").replace(/>/g, "\\u003e");
+  const gpsDataJson = JSON.stringify(gpsData).replace(/</g, "\\u003c").replace(/>/g, "\\u003e");
 
   return `<!DOCTYPE html>
 <html lang="en">
@@ -166,6 +167,7 @@ function renderDashboard(visits, total, ipCounts) {
   <script>
     const ALL_VISITS = ${dataJson};
     const IP_COUNTS = ${ipCountsJson};
+    const GPS_DATA = ${gpsDataJson};
     let activeTypeFilter = 'ALL';
 
     function esc(s) {
@@ -182,8 +184,12 @@ function renderDashboard(visits, total, ipCounts) {
     }
 
     function mapLink(v) {
+      const gps = GPS_DATA[v.ip];
+      if (gps) {
+        return ' <a href="https://www.google.com/maps?q=' + gps.latitude + ',' + gps.longitude + '" target="_blank" class="map-link" style="color:#22c55e">GPS \u2713</a>';
+      }
       if (!v.latitude || !v.longitude) return '';
-      return ' <a href="https://www.google.com/maps?q=' + v.latitude + ',' + v.longitude + '" target="_blank" class="map-link">Map</a>';
+      return ' <a href="https://www.google.com/maps?q=' + v.latitude + ',' + v.longitude + '" target="_blank" class="map-link">Map ~</a>';
     }
 
     function populateSelect(id, values) {
@@ -354,7 +360,7 @@ export default async function handler(req, res) {
 
     if (!rawVisits || rawVisits.length === 0) {
       res.setHeader("Content-Type", "text/html; charset=utf-8");
-      return res.status(200).send(renderDashboard([], 0, {}));
+      return res.status(200).send(renderDashboard([], 0, {}, {}));
     }
 
     const visits = rawVisits.map((v) => {
@@ -362,18 +368,23 @@ export default async function handler(req, res) {
     }).filter(Boolean);
 
     const uniqueIps = [...new Set(visits.map((v) => v.ip))];
-    const ipCountResults = await Promise.all(
-      uniqueIps.map((ip) => redis("GET", `visits:ip:${ip}`))
-    );
+    const [ipCountResults, gpsResults] = await Promise.all([
+      Promise.all(uniqueIps.map((ip) => redis("GET", `visits:ip:${ip}`))),
+      Promise.all(uniqueIps.map((ip) => redis("GET", `gps:${ip}`))),
+    ]);
 
     const ipCounts = {};
+    const gpsData = {};
     uniqueIps.forEach((ip, i) => {
       ipCounts[ip] = parseInt(ipCountResults[i], 10) || 0;
+      if (gpsResults[i]) {
+        try { gpsData[ip] = JSON.parse(gpsResults[i]); } catch {}
+      }
     });
 
     res.setHeader("Content-Type", "text/html; charset=utf-8");
     res.setHeader("Cache-Control", "no-store");
-    return res.status(200).send(renderDashboard(visits, parseInt(total, 10) || visits.length, ipCounts));
+    return res.status(200).send(renderDashboard(visits, parseInt(total, 10) || visits.length, ipCounts, gpsData));
   } catch (err) {
     console.error("Visits dashboard error:", err);
     return res.status(500).json({ error: "Internal error" });
