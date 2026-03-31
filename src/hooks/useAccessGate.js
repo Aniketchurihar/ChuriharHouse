@@ -63,11 +63,10 @@ export function useAccessGate() {
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
-    const ref = params.get("ref") || getStoredRef();
+    const ref = params.get("ref");
 
     if (ref && VALID_REFS[ref]) {
       storeRef(ref);
-      window.history.replaceState({}, "", window.location.pathname);
 
       if (typeof window.clarity === "function") {
         window.clarity("identify", VALID_REFS[ref]);

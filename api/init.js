@@ -26,18 +26,26 @@ function parseDevice(ua) {
   return { device, os, browserName };
 }
 
-async function fetchPostalCode(ip) {
-  if (!ip || ip === "Unknown") return "";
+async function fetchGeoData(ip) {
+  if (!ip || ip === "Unknown") return null;
   try {
     const cleanIp = ip.split(",")[0].trim();
     const res = await fetch(`https://ipapi.co/${cleanIp}/json/`, {
       signal: AbortSignal.timeout(3000),
     });
-    if (!res.ok) return "";
+    if (!res.ok) return null;
     const data = await res.json();
-    return data.postal || "";
+    if (data.error) return null;
+    return {
+      city: data.city || "",
+      region: data.region_code || "",
+      country: data.country_code || "",
+      postal: data.postal || "",
+      latitude: data.latitude ? String(data.latitude) : "",
+      longitude: data.longitude ? String(data.longitude) : "",
+    };
   } catch {
-    return "";
+    return null;
   }
 }
 
@@ -67,15 +75,17 @@ export default async function handler(req, res) {
   }
 
   const ip = req.headers["x-forwarded-for"] || req.headers["x-real-ip"] || "Unknown";
-  const city = req.headers["x-vercel-ip-city"] || "Unknown";
-  const country = req.headers["x-vercel-ip-country"] || "Unknown";
-  const region = req.headers["x-vercel-ip-country-region"] || "";
-  const latitude = req.headers["x-vercel-ip-latitude"] || "";
-  const longitude = req.headers["x-vercel-ip-longitude"] || "";
   const timestamp = new Date().toLocaleString("en-IN", { timeZone: "Asia/Kolkata" });
-  const location = `${city}${region ? ", " + region : ""}, ${country}`;
   const { device, os, browserName } = parseDevice(browser);
-  const postalCode = await fetchPostalCode(ip);
+
+  const geo = await fetchGeoData(ip);
+  const city = geo?.city || req.headers["x-vercel-ip-city"] || "Unknown";
+  const country = geo?.country || req.headers["x-vercel-ip-country"] || "Unknown";
+  const region = geo?.region || req.headers["x-vercel-ip-country-region"] || "";
+  const latitude = geo?.latitude || req.headers["x-vercel-ip-latitude"] || "";
+  const longitude = geo?.longitude || req.headers["x-vercel-ip-longitude"] || "";
+  const postalCode = geo?.postal || "";
+  const location = `${city}${region ? ", " + region : ""}, ${country}`;
 
   const isAniket = visitor === "Aniket";
   const isPrivateView = !visitor || visitor === "Unknown";
