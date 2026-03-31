@@ -124,6 +124,10 @@ function renderDashboard(visits, total, ipCounts) {
       <select id="f-country" onchange="applyFilters()"></select>
     </div>
     <div class="filter-group">
+      <span class="filter-label">PIN / ZIP Code</span>
+      <select id="f-postal" onchange="applyFilters()"></select>
+    </div>
+    <div class="filter-group">
       <span class="filter-label">IP Address</span>
       <select id="f-ip" onchange="applyFilters()"></select>
     </div>
@@ -140,7 +144,7 @@ function renderDashboard(visits, total, ipCounts) {
     <div class="table-scroll" style="max-height: 300px;">
       <table>
         <thead>
-          <tr><th>IP Address</th><th>Visits</th><th>Location</th><th>Device</th><th>Last Visitor</th><th>Last Visit</th></tr>
+          <tr><th>IP Address</th><th>Visits</th><th>Location</th><th>PIN/ZIP</th><th>Device</th><th>Last Visitor</th><th>Last Visit</th></tr>
         </thead>
         <tbody id="ip-body"></tbody>
       </table>
@@ -152,7 +156,7 @@ function renderDashboard(visits, total, ipCounts) {
     <div class="table-scroll">
       <table>
         <thead>
-          <tr><th>Time (IST)</th><th>Type</th><th>Visitor</th><th>IP</th><th>IP Visits</th><th>Location</th><th>Device</th><th>OS</th><th>Browser</th><th>Screen</th><th>Referrer</th></tr>
+          <tr><th>Time (IST)</th><th>Type</th><th>Visitor</th><th>IP</th><th>IP Visits</th><th>Location</th><th>PIN/ZIP</th><th>Device</th><th>OS</th><th>Browser</th><th>Screen</th><th>Referrer</th></tr>
         </thead>
         <tbody id="visits-body"></tbody>
       </table>
@@ -200,6 +204,7 @@ function renderDashboard(visits, total, ipCounts) {
       populateSelect('f-browser', unique(ALL_VISITS, 'browserName'));
       populateSelect('f-city', unique(ALL_VISITS, 'city'));
       populateSelect('f-country', unique(ALL_VISITS, 'country'));
+      populateSelect('f-postal', unique(ALL_VISITS, 'postalCode'));
       populateSelect('f-ip', unique(ALL_VISITS, 'ip'));
     }
 
@@ -210,6 +215,7 @@ function renderDashboard(visits, total, ipCounts) {
       const browser = document.getElementById('f-browser').value;
       const city = document.getElementById('f-city').value;
       const country = document.getElementById('f-country').value;
+      const postal = document.getElementById('f-postal').value;
       const ip = document.getElementById('f-ip').value;
       const search = document.getElementById('f-search').value.toLowerCase();
 
@@ -220,6 +226,7 @@ function renderDashboard(visits, total, ipCounts) {
         if (browser && (v.browserName || 'Unknown') !== browser) return false;
         if (city && (v.city || 'Unknown') !== city) return false;
         if (country && (v.country || 'Unknown') !== country) return false;
+        if (postal && (v.postalCode || 'Unknown') !== postal) return false;
         if (ip && v.ip !== ip) return false;
         if (search) {
           const text = JSON.stringify(v).toLowerCase();
@@ -232,7 +239,7 @@ function renderDashboard(visits, total, ipCounts) {
     function renderVisits(filtered) {
       const tbody = document.getElementById('visits-body');
       if (!filtered.length) {
-        tbody.innerHTML = '<tr><td colspan="11" class="empty">No visits match filters</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="12" class="empty">No visits match filters</td></tr>';
         return;
       }
       tbody.innerHTML = filtered.map(v =>
@@ -243,6 +250,7 @@ function renderDashboard(visits, total, ipCounts) {
         '<td class="mono">' + esc(v.ip) + '</td>' +
         '<td><strong>' + (IP_COUNTS[v.ip] || '?') + '</strong></td>' +
         '<td>' + esc(v.location) + mapLink(v) + '</td>' +
+        '<td>' + esc(v.postalCode || '-') + '</td>' +
         '<td><span class="tag">' + esc(v.device || '?') + '</span></td>' +
         '<td><span class="tag">' + esc(v.os || '?') + '</span></td>' +
         '<td><span class="tag">' + esc(v.browserName || '?') + '</span></td>' +
@@ -263,7 +271,7 @@ function renderDashboard(visits, total, ipCounts) {
       const sorted = Object.entries(ips).sort((a, b) => b[1].count - a[1].count);
 
       if (!sorted.length) {
-        tbody.innerHTML = '<tr><td colspan="6" class="empty">No data</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="7" class="empty">No data</td></tr>';
         return;
       }
 
@@ -272,6 +280,7 @@ function renderDashboard(visits, total, ipCounts) {
         '<td class="mono">' + esc(ip) + '</td>' +
         '<td><strong>' + (IP_COUNTS[ip] || d.count) + '</strong></td>' +
         '<td>' + esc(d.latest.location) + mapLink(d.latest) + '</td>' +
+        '<td>' + esc(d.latest.postalCode || '-') + '</td>' +
         '<td><span class="tag">' + esc(d.latest.device || '?') + '</span> <span class="tag">' + esc(d.latest.os || '?') + '</span> <span class="tag">' + esc(d.latest.browserName || '?') + '</span></td>' +
         '<td>' + esc(d.latest.visitor) + '</td>' +
         '<td>' + esc(d.latest.timestamp) + '</td>' +
@@ -312,6 +321,7 @@ function renderDashboard(visits, total, ipCounts) {
       document.getElementById('f-browser').value = '';
       document.getElementById('f-city').value = '';
       document.getElementById('f-country').value = '';
+      document.getElementById('f-postal').value = '';
       document.getElementById('f-ip').value = '';
       document.getElementById('f-search').value = '';
       activeTypeFilter = 'ALL';

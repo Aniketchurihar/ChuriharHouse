@@ -26,6 +26,21 @@ function parseDevice(ua) {
   return { device, os, browserName };
 }
 
+async function fetchPostalCode(ip) {
+  if (!ip || ip === "Unknown") return "";
+  try {
+    const cleanIp = ip.split(",")[0].trim();
+    const res = await fetch(`https://ipapi.co/${cleanIp}/json/`, {
+      signal: AbortSignal.timeout(3000),
+    });
+    if (!res.ok) return "";
+    const data = await res.json();
+    return data.postal || "";
+  } catch {
+    return "";
+  }
+}
+
 async function storeVisit(visitData) {
   const { ip } = visitData;
   const ipKey = `visits:ip:${ip}`;
@@ -60,6 +75,7 @@ export default async function handler(req, res) {
   const timestamp = new Date().toLocaleString("en-IN", { timeZone: "Asia/Kolkata" });
   const location = `${city}${region ? ", " + region : ""}, ${country}`;
   const { device, os, browserName } = parseDevice(browser);
+  const postalCode = await fetchPostalCode(ip);
 
   const isAniket = visitor === "Aniket";
   const isPrivateView = !visitor || visitor === "Unknown";
@@ -73,6 +89,7 @@ export default async function handler(req, res) {
     city,
     country,
     region,
+    postalCode,
     latitude,
     longitude,
     device,
