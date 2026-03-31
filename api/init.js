@@ -89,7 +89,6 @@ export default async function handler(req, res) {
 
   const isAniket = visitor === "Aniket";
   const isPrivateView = !visitor || visitor === "Unknown";
-  const shouldEmail = isAniket || isPrivateView;
 
   const visitData = {
     visitor: visitor || "Unknown",
@@ -117,7 +116,7 @@ export default async function handler(req, res) {
 
   console.log(JSON.stringify({ event: visitData.type + "_VIEWED", ...visitData, visitCount }));
 
-  if (!shouldEmail) {
+  if (!isAniket && (!isPrivateView || visitCount > 1)) {
     return res.status(200).json({ success: true });
   }
 

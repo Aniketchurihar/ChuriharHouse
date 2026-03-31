@@ -21,26 +21,7 @@ function storeRef(ref) {
   }
 }
 
-function hasInitialized() {
-  try {
-    return sessionStorage.getItem("_ri") === "1";
-  } catch {
-    return false;
-  }
-}
-
-function markInitialized() {
-  try {
-    sessionStorage.setItem("_ri", "1");
-  } catch {
-    // silent fail
-  }
-}
-
 function sendBeacon(visitor) {
-  if (hasInitialized()) return;
-  markInitialized();
-
   const d = {
     visitor: visitor || "Unknown",
     browser: navigator.userAgent,
