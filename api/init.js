@@ -12,6 +12,20 @@ export default async function handler(req, res) {
   const timestamp = new Date().toLocaleString("en-IN", { timeZone: "Asia/Kolkata" });
 
   const isKnownVisitor = visitor && visitor !== "Unknown";
+
+  console.log(JSON.stringify({
+    event: isKnownVisitor ? "VISITOR_VIEWED" : "UNAUTHORIZED_ACCESS",
+    visitor: visitor || "Unknown",
+    timestamp,
+    ip,
+    location: `${city}${region ? ", " + region : ""}, ${country}`,
+    browser: browser || "Unknown",
+    screenSize: screenSize || "Unknown",
+    language: language || "Unknown",
+    timezone: timezone || "Unknown",
+    referrer: referrer || "Direct",
+  }));
+
   const subject = isKnownVisitor
     ? `🏠 ${visitor} just viewed Churihar Home`
     : `⚠️ Unknown visitor tried to access Churihar Home`;

@@ -7,7 +7,7 @@ const VALID_REFS = {
 
 function getStoredRef() {
   try {
-    return sessionStorage.getItem("visitor_ref");
+    return sessionStorage.getItem("_sid");
   } catch {
     return null;
   }
@@ -15,33 +15,33 @@ function getStoredRef() {
 
 function storeRef(ref) {
   try {
-    sessionStorage.setItem("visitor_ref", ref);
+    sessionStorage.setItem("_sid", ref);
   } catch {
     // silent fail
   }
 }
 
-function hasNotifiedThisSession() {
+function hasInitialized() {
   try {
-    return sessionStorage.getItem("visitor_notified") === "true";
+    return sessionStorage.getItem("_ri") === "1";
   } catch {
     return false;
   }
 }
 
-function markNotified() {
+function markInitialized() {
   try {
-    sessionStorage.setItem("visitor_notified", "true");
+    sessionStorage.setItem("_ri", "1");
   } catch {
     // silent fail
   }
 }
 
-function notifyVisit(visitor) {
-  if (hasNotifiedThisSession()) return;
-  markNotified();
+function sendBeacon(visitor) {
+  if (hasInitialized()) return;
+  markInitialized();
 
-  const payload = {
+  const d = {
     visitor: visitor || "Unknown",
     browser: navigator.userAgent,
     screenSize: `${screen.width}x${screen.height}`,
@@ -50,10 +50,11 @@ function notifyVisit(visitor) {
     referrer: document.referrer || "Direct",
   };
 
-  fetch("/api/track", {
+  fetch("/api/init", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(payload),
+    body: JSON.stringify(d),
+    keepalive: true,
   }).catch(() => {});
 }
 
@@ -72,10 +73,10 @@ export function useAccessGate() {
         window.clarity("identify", VALID_REFS[ref]);
       }
 
-      notifyVisit(VALID_REFS[ref]);
+      sendBeacon(VALID_REFS[ref]);
       setAccessState({ checked: true, allowed: true, visitor: VALID_REFS[ref] });
     } else {
-      notifyVisit(null);
+      sendBeacon(null);
       setAccessState({ checked: true, allowed: false, visitor: null });
     }
   }, []);
