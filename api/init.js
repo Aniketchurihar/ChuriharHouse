@@ -1,4 +1,20 @@
+import { redis, pipeline } from "./_redis.js";
+
 const BOT_PATTERNS = /bot|crawler|spider|vercel|headless|lighthouse|pingdom|uptimerobot|curl|wget|python|node-fetch|go-http/i;
+
+async function storeVisit(visitData) {
+  const { ip } = visitData;
+  const ipKey = `visits:ip:${ip}`;
+
+  const results = await pipeline([
+    ["LPUSH", "visits:log", JSON.stringify(visitData)],
+    ["INCR", ipKey],
+    ["INCR", "visits:total"],
+  ]);
+
+  if (!results) return 0;
+  return results[1]?.result || 0;
+}
 
 export default async function handler(req, res) {
   if (req.method !== "POST") {
@@ -22,18 +38,25 @@ export default async function handler(req, res) {
   const isPrivateView = !visitor || visitor === "Unknown";
   const shouldEmail = isAniket || isPrivateView;
 
-  console.log(JSON.stringify({
-    event: isAniket ? "ANIKET_VIEWED" : isPrivateView ? "PRIVATE_VIEW" : "CHURIHAR_VIEWED",
+  const visitData = {
     visitor: visitor || "Unknown",
     timestamp,
     ip,
     location,
+    city,
+    country,
+    region,
     browser: browser || "Unknown",
     screenSize: screenSize || "Unknown",
     language: language || "Unknown",
     timezone: timezone || "Unknown",
     referrer: referrer || "Direct",
-  }));
+    type: isAniket ? "ANIKET" : isPrivateView ? "PRIVATE" : "CHURIHAR",
+  };
+
+  const visitCount = await storeVisit(visitData);
+
+  console.log(JSON.stringify({ event: visitData.type + "_VIEWED", ...visitData, visitCount }));
 
   if (!shouldEmail) {
     return res.status(200).json({ success: true });
@@ -45,17 +68,24 @@ export default async function handler(req, res) {
 
   const headerBg = isAniket ? "#0a0a0a" : "#7f1d1d";
   const headerTitle = isAniket ? "🏠 Aniket Visited" : "👁️ Private Viewing Alert";
+  const visitBadge = visitCount > 1
+    ? `<span style="background: #f59e0b; color: #fff; padding: 2px 10px; border-radius: 12px; font-size: 12px; font-weight: 600; margin-left: 10px;">Visit #${visitCount}</span>`
+    : `<span style="background: #22c55e; color: #fff; padding: 2px 10px; border-radius: 12px; font-size: 12px; font-weight: 600; margin-left: 10px;">First visit</span>`;
 
   const html = `
     <div style="font-family: 'Segoe UI', Arial, sans-serif; max-width: 520px; margin: 0 auto; background: #fafaf9; border-radius: 12px; overflow: hidden; border: 1px solid #e5e5e5;">
       <div style="background: ${headerBg}; padding: 24px 28px;">
-        <h2 style="margin: 0; color: #fafaf9; font-size: 20px;">${headerTitle}</h2>
+        <h2 style="margin: 0; color: #fafaf9; font-size: 20px;">${headerTitle} ${visitBadge}</h2>
       </div>
       <div style="padding: 24px 28px;">
         <table style="width: 100%; border-collapse: collapse; font-size: 14px;">
           <tr>
             <td style="padding: 10px 0; color: #6b7280; width: 120px;">Visitor</td>
             <td style="padding: 10px 0; font-weight: 600; color: #1a1a1a;">${isAniket ? "Aniket" : "Unknown"}</td>
+          </tr>
+          <tr style="border-top: 1px solid #f0f0f0;">
+            <td style="padding: 10px 0; color: #6b7280;">Visits from IP</td>
+            <td style="padding: 10px 0; font-weight: 600; color: ${visitCount > 1 ? "#f59e0b" : "#22c55e"};">${visitCount} ${visitCount === 1 ? "(first time)" : "times"}</td>
           </tr>
           <tr style="border-top: 1px solid #f0f0f0;">
             <td style="padding: 10px 0; color: #6b7280;">Time (IST)</td>
