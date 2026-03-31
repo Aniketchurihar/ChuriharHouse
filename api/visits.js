@@ -1,6 +1,6 @@
 import { redis } from "./_redis.js";
 
-const ADMIN_KEY = process.env.ADMIN_DASHBOARD_KEY || "ch_admin_9v3k";
+const ADMIN_REF = "x7k9m2";
 
 function escapeHtml(str) {
   return String(str)
@@ -15,38 +15,44 @@ function renderDashboard(visits, total, ipCounts) {
 
   const rows = visits
     .map(
-      (v) => `
+      (v) => {
+        const mapLink = v.latitude && v.longitude
+          ? `<a href="https://www.google.com/maps?q=${v.latitude},${v.longitude}" target="_blank" class="map-link">Map</a>`
+          : "";
+        return `
       <tr>
         <td>${escapeHtml(v.timestamp)}</td>
         <td><span class="badge ${v.type === "PRIVATE" ? "badge-red" : v.type === "ANIKET" ? "badge-blue" : "badge-green"}">${escapeHtml(v.type)}</span></td>
         <td>${escapeHtml(v.visitor)}</td>
         <td class="mono">${escapeHtml(v.ip)}</td>
         <td><strong>${ipCounts[v.ip] || "?"}</strong></td>
-        <td>${escapeHtml(v.location)}</td>
-        <td class="small">${escapeHtml(v.browser).substring(0, 80)}</td>
+        <td>${escapeHtml(v.location)} ${mapLink}</td>
+        <td>${escapeHtml(v.device || "?")} · ${escapeHtml(v.os || "?")} · ${escapeHtml(v.browserName || "?")}</td>
         <td>${escapeHtml(v.screenSize)}</td>
         <td>${escapeHtml(v.referrer)}</td>
-      </tr>`
+      </tr>`;
+      }
     )
     .join("");
 
   const ipTableRows = Object.entries(ipCounts)
     .sort((a, b) => b[1] - a[1])
     .map(
-      ([ip, count]) => `
+      ([ip, count]) => {
+        const latest = visits.find((v) => v.ip === ip);
+        const mapLink = latest?.latitude && latest?.longitude
+          ? `<a href="https://www.google.com/maps?q=${latest.latitude},${latest.longitude}" target="_blank" class="map-link">Map</a>`
+          : "";
+        return `
       <tr>
         <td class="mono">${escapeHtml(ip)}</td>
         <td><strong>${count}</strong></td>
-        <td>
-          ${visits
-            .filter((v) => v.ip === ip)
-            .slice(0, 1)
-            .map((v) => escapeHtml(v.location))
-            .join("")}
-        </td>
-        <td>${escapeHtml(visits.find((v) => v.ip === ip)?.visitor || "Unknown")}</td>
-        <td>${escapeHtml(visits.find((v) => v.ip === ip)?.timestamp || "")}</td>
-      </tr>`
+        <td>${escapeHtml(latest?.location || "Unknown")} ${mapLink}</td>
+        <td>${escapeHtml(latest?.device || "?")} · ${escapeHtml(latest?.os || "?")} · ${escapeHtml(latest?.browserName || "?")}</td>
+        <td>${escapeHtml(latest?.visitor || "Unknown")}</td>
+        <td>${escapeHtml(latest?.timestamp || "")}</td>
+      </tr>`;
+      }
     )
     .join("");
 
@@ -81,6 +87,8 @@ function renderDashboard(visits, total, ipCounts) {
     .filter-bar input { background: #171717; border: 1px solid #262626; border-radius: 8px; padding: 8px 14px; color: #e5e5e5; font-size: 13px; width: 260px; outline: none; }
     .filter-bar input:focus { border-color: #525252; }
     .filter-bar input::placeholder { color: #525252; }
+    .map-link { color: #60a5fa; text-decoration: none; font-size: 11px; margin-left: 6px; }
+    .map-link:hover { text-decoration: underline; }
     .empty { text-align: center; padding: 48px; color: #525252; }
     @media (max-width: 768px) { body { padding: 12px; } .stats { flex-direction: column; } }
   </style>
@@ -112,9 +120,9 @@ function renderDashboard(visits, total, ipCounts) {
   <div class="table-wrap">
     <table>
       <thead>
-        <tr><th>IP Address</th><th>Visit Count</th><th>Location</th><th>Last Visitor</th><th>Last Visit</th></tr>
+        <tr><th>IP Address</th><th>Visits</th><th>Location</th><th>Device</th><th>Last Visitor</th><th>Last Visit</th></tr>
       </thead>
-      <tbody>${ipTableRows || '<tr><td colspan="5" class="empty">No data yet</td></tr>'}</tbody>
+      <tbody>${ipTableRows || '<tr><td colspan="6" class="empty">No data yet</td></tr>'}</tbody>
     </table>
   </div>
 
@@ -125,7 +133,7 @@ function renderDashboard(visits, total, ipCounts) {
   <div class="table-wrap" style="max-height: 600px; overflow-y: auto;">
     <table>
       <thead>
-        <tr><th>Time (IST)</th><th>Type</th><th>Visitor</th><th>IP</th><th>IP Visits</th><th>Location</th><th>Browser</th><th>Screen</th><th>Referrer</th></tr>
+        <tr><th>Time (IST)</th><th>Type</th><th>Visitor</th><th>IP</th><th>IP Visits</th><th>Location</th><th>Device · OS · Browser</th><th>Screen</th><th>Referrer</th></tr>
       </thead>
       <tbody id="visits-body">${rows || '<tr><td colspan="9" class="empty">No visits recorded yet</td></tr>'}</tbody>
     </table>
@@ -150,7 +158,7 @@ export default async function handler(req, res) {
   }
 
   const { key } = req.query;
-  if (key !== ADMIN_KEY) {
+  if (key !== ADMIN_REF) {
     return res.status(403).json({ error: "Forbidden" });
   }
 

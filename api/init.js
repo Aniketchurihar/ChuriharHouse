@@ -2,6 +2,30 @@ import { redis, pipeline } from "./_redis.js";
 
 const BOT_PATTERNS = /bot|crawler|spider|vercel|headless|lighthouse|pingdom|uptimerobot|curl|wget|python|node-fetch|go-http/i;
 
+function parseDevice(ua) {
+  if (!ua) return { device: "Unknown", os: "Unknown", browserName: "Unknown" };
+
+  let device = "Desktop";
+  if (/Mobile|Android.*Mobile|iPhone|iPod/i.test(ua)) device = "Mobile";
+  else if (/iPad|Android(?!.*Mobile)|Tablet/i.test(ua)) device = "Tablet";
+
+  let os = "Unknown";
+  if (/Windows/i.test(ua)) os = "Windows";
+  else if (/Mac OS X|Macintosh/i.test(ua)) os = /iPhone|iPad|iPod/i.test(ua) ? "iOS" : "macOS";
+  else if (/Android/i.test(ua)) os = "Android";
+  else if (/Linux/i.test(ua)) os = "Linux";
+  else if (/CrOS/i.test(ua)) os = "ChromeOS";
+
+  let browserName = "Unknown";
+  if (/Edg\//i.test(ua)) browserName = "Edge";
+  else if (/OPR|Opera/i.test(ua)) browserName = "Opera";
+  else if (/Chrome|CriOS/i.test(ua)) browserName = "Chrome";
+  else if (/Safari/i.test(ua) && !/Chrome/i.test(ua)) browserName = "Safari";
+  else if (/Firefox|FxiOS/i.test(ua)) browserName = "Firefox";
+
+  return { device, os, browserName };
+}
+
 async function storeVisit(visitData) {
   const { ip } = visitData;
   const ipKey = `visits:ip:${ip}`;
@@ -31,8 +55,11 @@ export default async function handler(req, res) {
   const city = req.headers["x-vercel-ip-city"] || "Unknown";
   const country = req.headers["x-vercel-ip-country"] || "Unknown";
   const region = req.headers["x-vercel-ip-country-region"] || "";
+  const latitude = req.headers["x-vercel-ip-latitude"] || "";
+  const longitude = req.headers["x-vercel-ip-longitude"] || "";
   const timestamp = new Date().toLocaleString("en-IN", { timeZone: "Asia/Kolkata" });
   const location = `${city}${region ? ", " + region : ""}, ${country}`;
+  const { device, os, browserName } = parseDevice(browser);
 
   const isAniket = visitor === "Aniket";
   const isPrivateView = !visitor || visitor === "Unknown";
@@ -46,6 +73,11 @@ export default async function handler(req, res) {
     city,
     country,
     region,
+    latitude,
+    longitude,
+    device,
+    os,
+    browserName,
     browser: browser || "Unknown",
     screenSize: screenSize || "Unknown",
     language: language || "Unknown",
