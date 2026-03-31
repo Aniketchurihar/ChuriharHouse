@@ -1,5 +1,7 @@
 import { useState, useEffect } from "react";
+import { Analytics } from "@vercel/analytics/react";
 import { useLenis } from "./hooks/useLenis";
+import { useAccessGate } from "./hooks/useAccessGate";
 import Preloader from "./components/Preloader";
 import Navbar from "./components/Navbar";
 import HeroSection from "./components/HeroSection";
@@ -11,9 +13,11 @@ import VideoSection from "./components/VideoSection";
 import FeaturesSection from "./components/FeaturesSection";
 import PanoramicViewer from "./components/PanoramicViewer";
 import Footer from "./components/Footer";
+import AccessDenied from "./components/AccessDenied";
 
 function App() {
   const [preloaderDone, setPreloaderDone] = useState(false);
+  const { checked, allowed, visitor } = useAccessGate();
   useLenis();
 
   useEffect(() => {
@@ -21,8 +25,12 @@ function App() {
     return () => clearTimeout(timer);
   }, []);
 
+  if (!checked) return null;
+  if (!allowed) return <AccessDenied />;
+
   return (
     <>
+      <Analytics />
       <Preloader onComplete={() => setPreloaderDone(true)} isVisible={!preloaderDone} />
       <div className={preloaderDone ? "" : "overflow-hidden"}>
         <Navbar />
